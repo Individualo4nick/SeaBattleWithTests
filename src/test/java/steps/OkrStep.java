@@ -4,22 +4,22 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import org.example.Game;
 import org.junit.jupiter.api.Assertions;
 
 public class OkrStep {
-    private int pole[][];
-    int x, y;
-    boolean checkCoord;
-    String errorMessage;
+    private Game game;
+    private int x, y;
+    private int copyPole[][] = new int[10][10];
     @Given("Поле с кораблями и выстрелами")
     public void givePole() {
-        this.pole = new int[10][10];
+        game = new Game();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (j%2 == 0)
-                    this.pole[i][j] = -1;
+                    game.polePlayer[i][j] = -1;
                 if (j%2 != 0)
-                    this.pole[i][j] = 6;
+                    game.polePlayer[i][j] = 6;
             }
         }
     }
@@ -31,33 +31,34 @@ public class OkrStep {
     @When("Координаты находятся внутри поля")
     public void checkFirstPredicate() {
         if (((x >= 0) && (x <= 9)) && ((y >= 0) && (y <= 9))) {
-            this.checkCoord = true;
-        } else this.checkCoord = false;
+            Assertions.assertTrue(true);
+        } else Assertions.fail();
     }
     @And("Значение в клетке равно {int} или {int}")
     public void checkSecondPredicateTrue(int firstValue, int secondValue) {
-        if(pole[x][y] == firstValue || pole[x][y] == secondValue)
-            this.checkCoord = true;
-        else this.checkCoord = false;
+        if(game.polePlayer[x][y] == firstValue || game.polePlayer[x][y] == secondValue)
+            Assertions.assertTrue(true);
+        else Assertions.fail();
     }
     @Then("Уменьшается значение в клетке на 1. Ожидаем {int} или {int}")
     public void decrementValue(int firstAnswer, int secondAnswer) {
-        if (checkCoord) {
-            this.pole[x][y]--;
-        }
-        Assertions.assertTrue(pole[x][y] == firstAnswer || pole[x][y] == secondAnswer);
+        game.setOkrKilled(game.polePlayer, x, y);
+        Assertions.assertTrue(game.polePlayer[x][y] == firstAnswer || game.polePlayer[x][y] == secondAnswer);
     }
     @When("Координаты не находятся внутри поля")
     public void checkFirstPredicateFalse() {
         if (((x >= 0) && (x <= 9)) && ((y >= 0) && (y <= 9))) {
-            this.checkCoord = true;
-        } else this.checkCoord = false;
+            Assertions.fail();
+        } else Assertions.assertTrue(true);
     }
-    @Then("Выводится сообщение {string}")
-    public void noDecrementValue(String predicateErrorMessage) {
-        if (!checkCoord) {
-            errorMessage = "Ошибка координат";
+    @Then("Поле не меняется")
+    public void noDecrementValue() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                copyPole[i][j] = game.polePlayer[i][j];
+            }
         }
-        Assertions.assertEquals(errorMessage, predicateErrorMessage);
+        game.setOkrKilled(game.polePlayer, x, y);
+        Assertions.assertArrayEquals(copyPole, game.polePlayer);
     }
 }

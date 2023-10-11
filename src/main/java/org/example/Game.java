@@ -4,6 +4,7 @@ public class Game {
     public int polePlayer[][];
     public int poleComp[][];
     public int C1, C2, C3, C4;
+    public int P1, P2, P3, P4;
     public Game() {
         polePlayer = new int[10][10];
         poleComp = new int[10][10];
@@ -60,7 +61,6 @@ public class Game {
             }
         }
 
-
     }
     public void surroundADeadShip(int[][] mas, int i, int j) {
         setOkrKilled(mas, i - 1, j - 1); // сверху слева
@@ -71,5 +71,17 @@ public class Game {
         setOkrKilled(mas, i + 1, j); // снизу
         setOkrKilled(mas, i + 1, j - 1); // снизу слева
         setOkrKilled(mas, i, j - 1); // слева
+    }
+    public void kolvoUbitPk(int[][]mas){
+        P4=0;P3=0;P2=0;P1=0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (mas[i][j]==18) P4++;
+                if (mas[i][j]==17) P3++;
+                if (mas[i][j]==16) P2++;
+                if (mas[i][j]==15) P1++;
+            }
+        }
+        P4/=4;P3/=3;P2/=2;
     }
 }

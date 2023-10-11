@@ -15,7 +15,7 @@ public class KolvoUbitStep {
     private void fillTestGameField(int[][] field, int c4, int c3, int c2, int c1) {
         //Подбитые четырехпалубные корабли
         int index = 0;
-        for(int i =0 ; i < C4; i++) {
+        for(int i = 0; i < c4; i++) {
             for(int j = 0; j < 4; j++) {
                 field[index][j] = 18;
             }
@@ -23,7 +23,7 @@ public class KolvoUbitStep {
         }
         //Трехпарусные корабли
         index = 2;
-        for(int i = 0; i < C3; i++ ) {
+        for(int i = 0; i < c3; i++ ) {
             for(int j =0 ; j < 3; j++) {
                 field[index][j] = 17;
             }
@@ -31,7 +31,7 @@ public class KolvoUbitStep {
         }
         //Двухпарусные корабли
         index = 0;
-        for(int i =0; i < C2; i++) {
+        for(int i =0; i < c2; i++) {
             for(int j = 5; j <= 6; j++) {
                 field[index][j] = 16;
             }
@@ -40,7 +40,7 @@ public class KolvoUbitStep {
 
         // Однопарусные корабли
         index = 0;
-        for(int i = 0; i < C1; i++) {
+        for(int i = 0; i < c1; i++) {
             field[7][index] = 15;
             index += 2;
         }
@@ -66,7 +66,6 @@ public class KolvoUbitStep {
         Assert.assertTrue(C2 <= 3);
         Assert.assertTrue(C3 <= 2);
         Assert.assertTrue(C4 <= 1);
-
     }
 
     @Then("Получаем корректное значение подбитых кораблей каждого типа")

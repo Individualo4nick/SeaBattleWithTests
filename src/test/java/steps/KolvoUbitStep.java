@@ -12,6 +12,39 @@ public class KolvoUbitStep {
     private int C2;
     private int C3;
     private int C4;
+    private void fillTestGameField(int[][] field, int c4, int c3, int c2, int c1) {
+        //Подбитые четырехпалубные корабли
+        int index = 0;
+        for(int i =0 ; i < C4; i++) {
+            for(int j = 0; j < 4; j++) {
+                field[index][j] = 18;
+            }
+            index += 2;
+        }
+        //Трехпарусные корабли
+        index = 2;
+        for(int i = 0; i < C3; i++ ) {
+            for(int j =0 ; j < 3; j++) {
+                field[index][j] = 17;
+            }
+            index += 2;
+        }
+        //Двухпарусные корабли
+        index = 0;
+        for(int i =0; i < C2; i++) {
+            for(int j = 5; j <= 6; j++) {
+                field[index][j] = 16;
+            }
+            index += 2;
+        }
+
+        // Однопарусные корабли
+        index = 0;
+        for(int i = 0; i < C1; i++) {
+            field[7][index] = 15;
+            index += 2;
+        }
+    }
     @Given("Дано игровое поле, с подбитыми кораблями")
     public void setNewGame(){
         game = new Game();
@@ -24,37 +57,8 @@ public class KolvoUbitStep {
         C2 = arg2;
         C1 = arg3;
         int[][] field = game.polePlayer;
-        //Подбитые четырехпалубные корабли
-        int index = 0;
-        for(int i =0 ; i < C4; i++) {
-            for(int j = 0; j < 4; j++) {
-                field[index][j] = 18;
-                index += 2;
-            }
-        }
-        //Трехпарусные корабли
-        index = 2;
-        for(int i = 0; i < C3; i++ ) {
-            for(int j =0 ; j < 3; j++) {
-                field[index][j] = 17;
-                index += 2;
-            }
-        }
-        //Двухпарусные корабли
-        index = 0;
-        for(int i =0; i < C2; i++) {
-            for(int j = 5; j <= 6; j++) {
-                field[index][j] = 16;
-                index += 2;
-            }
-        }
+        fillTestGameField(field, C4, C3, C2, C1);
 
-        // Однопарусные корабли
-        index = 0;
-        for(int i = 0; i < C1; i++) {
-            field[7][index] = 15;
-            index += 2;
-        }
     }
     @When("Количество указано корректно")
     public void checkTestValues() {

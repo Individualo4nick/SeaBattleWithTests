@@ -39,7 +39,7 @@ public class Game {
         pole[i][j] += 7;
         proverkaNaPopadanie(pole, i, j);
         endGame();
-        thread =new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 //если промах
@@ -407,7 +407,7 @@ public class Game {
         //Количество раненых палуб
         int ranen=0;
         //Выполняем подсчет раненых палуб
-        for (int a=i-(kolpalub-1);a<=i+(kolpalub-1  );a++) {
+        for (int a=i-(kolpalub-1);a<=i+(kolpalub-1);a++) {
             for (int b = j - (kolpalub - 1); b <= j + (kolpalub - 1); b++) {
                 // Если это палуба раненого корабля
                 if (indOutOfBounds(a, b) && (pole[a][b] == kolpalub + 7))

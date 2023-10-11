@@ -33,5 +33,16 @@ public class Game {
         }
         C4/=4;C3/=3;C2/=2;
     }
-
+    public void kolvoUbitPk(int[][]mas){
+        P4=0;P3=0;P2=0;P1=0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (mas[i][j]==18) P4++;
+                if (mas[i][j]==17) P3++;
+                if (mas[i][j]==16) P2++;
+                if (mas[i][j]==15) P1++;
+            }
+        }
+        P4/=4;P3/=3;P2/=2;
+    }
 }

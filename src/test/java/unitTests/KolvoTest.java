@@ -26,7 +26,6 @@ public class KolvoTest {
             }
             index += 2;
         }
-        //Трехпарусные корабли
         index = 2;
         for(int i = 0; i < p3; i++ ) {
             for(int j =0 ; j < 3; j++) {
@@ -34,7 +33,6 @@ public class KolvoTest {
             }
             index += 2;
         }
-        //Двухпарусные корабли
         index = 0;
         for(int i =0; i < p2; i++) {
             for(int j = 5; j <= 6; j++) {
@@ -42,8 +40,6 @@ public class KolvoTest {
             }
             index += 2;
         }
-
-        // Однопарусные корабли
         index = 0;
         for(int i = 0; i < p1; i++) {
             game.poleComp[7][index] = 15;

@@ -4,6 +4,7 @@ public class Game {
     public int polePlayer[][];
     public int poleComp[][];
     public int C1, C2, C3, C4;
+    public int P1, P2, P3, P4;
     public Game() {
         polePlayer = new int[10][10];
         poleComp = new int[10][10];
@@ -32,4 +33,5 @@ public class Game {
         }
         C4/=4;C3/=3;C2/=2;
     }
+
 }

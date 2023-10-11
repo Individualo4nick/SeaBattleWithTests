@@ -5,12 +5,12 @@ import javax.swing.*;
 public class Game {
     public int polePlayer[][];
     public int poleComp[][];
-    public int C1, C2, C3, C4;
-    public int P1, P2, P3, P4;
+    public static int endGame=3;
+    public int P1,P2,P3,P4;
+    public int C1,C2,C3,C4;
     public final int pause=600;
     public boolean myHod;
     public boolean compHod;
-    public static int endGame=3;
     Thread thread=new Thread();
     public Game() {
         polePlayer = new int[10][10];
@@ -116,11 +116,280 @@ public class Game {
             }
         }
     }
+
+    boolean compHodit(int pole[][]) {
+        //если идет автоигра или ход компьютера
+        if ((endGame == 0) || (compHod)) {
+            // Признак попадания в цель
+            boolean popal = false;
+            // Признак выстрела в раненый корабль
+            boolean ranen = false;
+            //признак направления корабля
+            boolean horiz = false;
+            _for1:
+            // break метка
+            // Пробегаем все игровое поле игрока
+            for (int i = 0; i < 10; i++)
+                for (int j = 0; j < 10; j++)
+                    //если находим раненую палубу
+                    if ((pole[i][j] >= 9) && (pole[i][j] <= 11)) {
+                        ranen = true;
+                        //ищем подбитую палубу слева и справа
+                        if ((indOutOfBounds(i - 3, j) && pole[i - 3][j] >= 9 && (pole[i - 3][j] <= 11))
+                                || (indOutOfBounds(i - 2, j) && pole[i - 2][j] >= 9 && (pole[i - 2][j] <= 11))
+                                || (indOutOfBounds(i - 1, j) && pole[i - 1][j] >= 9 && (pole[i - 1][j] <= 11))
+                                || (indOutOfBounds(i + 3, j) && pole[i + 3][j] >= 9 && (pole[i + 3][j] <= 11))
+                                || (indOutOfBounds(i + 2, j) && pole[i + 2][j] >= 9 && (pole[i + 2][j] <= 11))
+                                || (indOutOfBounds(i + 1, j) && pole[i + 1][j] >= 9 && (pole[i + 1][j] <= 11))) {
+                            horiz = true;
+                        } else if ((indOutOfBounds(i, j + 3) && pole[i][j + 3] >= 9 && (pole[i][j + 3] <= 11))
+                                //ищем подбитую палубу сверху и снизу
+                                || (indOutOfBounds(i, j + 2) && pole[i][j + 2] >= 9 && (pole[i][j + 2] <= 11))
+                                || (indOutOfBounds(i, j + 1) && pole[i][j + 1] >= 9 && (pole[i][j + 1] <= 11))
+                                || (indOutOfBounds(i, j - 3) && pole[i][j - 3] >= 9 && (pole[i][j - 3] <= 11))
+                                || (indOutOfBounds(i, j - 2) && pole[i][j - 2] >= 9 && (pole[i][j - 2] <= 11))
+                                || (indOutOfBounds(i, j - 1) && pole[i][j - 1] >= 9 && (pole[i][j - 1] <= 11))) {
+                            horiz = false;
+                        }
+                        //если не удалось определить направление корабля, то выбираем произвольное направление для обстрела
+                        else for (int x = 0; x < 50; x++) {
+                                int napr = (int) (Math.random() * 4);
+                                if (napr == 0 && indOutOfBounds(i - 1, j) && (pole[i - 1][j] <= 4) && (pole[i - 1][j] != -2)) {
+                                    pole[i - 1][j] += 7;
+                                    //проверяем, убили или нет
+                                    proverkaNaPopadanie(pole, i - 1, j);
+                                    if (pole[i - 1][j] >= 8) popal = true;
+                                    //прерываем цикл
+                                    break _for1;
+                                } else if (napr == 1 && indOutOfBounds(i + 1, j) && (pole[i + 1][j] <= 4) && (pole[i + 1][j] != -2)) {
+                                    pole[i + 1][j] += 7;
+                                    proverkaNaPopadanie(pole, i + 1, j);
+                                    if (pole[i + 1][j] >= 8) popal = true;
+                                    break _for1;
+                                } else if (napr == 2 && indOutOfBounds(i, j - 1) && (pole[i][j - 1] <= 4) && (pole[i][j - 1] != -2)) {
+                                    pole[i][j - 1] += 7;
+                                    proverkaNaPopadanie(pole, i, j - 1);
+                                    if (pole[i][j - 1] >= 8) popal = true;
+                                    break _for1;
+                                } else if (napr == 3 && indOutOfBounds(i, j + 1) && (pole[i][j + 1] <= 4) && (pole[i][j + 1] != -2)) {
+                                    pole[i][j + 1] += 7;
+                                    proverkaNaPopadanie(pole, i, j + 1);
+                                    if (pole[i][j + 1] >= 8) popal = true;
+                                    break _for1;
+                                }
+                            }
+                        //если определили направление, то производим выстрел только в этом напрвлении
+                        if (horiz) { //по горизонтали
+                            if (indOutOfBounds(i - 1, j) && (pole[i - 1][j] <= 4) && (pole[i - 1][j] != -2)) {
+                                pole[i - 1][j] += 7;
+                                proverkaNaPopadanie(pole, i - 1, j);
+                                if (pole[i - 1][j] >= 8) popal = true;
+                                break _for1;
+                            } else if (indOutOfBounds(i + 1, j) && (pole[i + 1][j] <= 4) && (pole[i + 1][j] != -2)) {
+                                pole[i + 1][j] += 7;
+                                proverkaNaPopadanie(pole, i + 1, j);
+                                if (pole[i + 1][j] >= 8) popal = true;
+                                break _for1;
+                            }
+                        }//по вертикали
+                        else if (indOutOfBounds(i, j - 1) && (pole[i][j - 1] <= 4) && (pole[i][j - 1] != -2)) {
+                            pole[i][j - 1] += 7;
+                            proverkaNaPopadanie(pole, i, j - 1);
+                            if (pole[i][j - 1] >= 8) popal = true;
+                            break _for1;
+                        } else if (indOutOfBounds(i, j + 1) && (pole[i][j + 1] <= 4) && (pole[i][j + 1] != -2)) {
+                            pole[i][j + 1] += 7;
+                            proverkaNaPopadanie(pole, i, j + 1);
+                            if (pole[i][j + 1] >= 8) popal = true;
+                            break _for1;
+                        }
+                    }
+
+            // если нет ранненых кораблей
+            if (!ranen) {
+                // делаем 100 случайных попыток выстрела
+                // в случайное место
+                for (int l = 1; l <= 100; l++) {
+                    // Находим случайную позицию на игровом поле
+                    int i = (int) (Math.random() * 10);
+                    int j = (int) (Math.random() * 10);
+                    //Проверяем, что можно сделать выстрел
+                    if ((pole[i][j] <= 4) && (pole[i][j] != -2)) {
+                        //делаем выстрел
+                        pole[i][j] += 7;
+                        //проверяем, что убит
+                        proverkaNaPopadanie(pole, i, j);
+                        // если произошло попадание
+                        if (pole[i][j] >= 8)
+                            popal = true;
+                        //выстрел произошел
+                        ranen = true;
+                        //прерываем цикл
+                        break;
+                    }
+                }
+            }
+            // проверяем конец игры
+            endGame();
+            // возвращаем результат
+            return popal;
+        }else return false;
+    }
     private boolean indOutOfBounds(int i, int j) {
         if (((i >= 0) && (i <= 9)) && ((j >= 0) && (j <= 9))) {
             return true;
         } else return false;
     }
+    private void setOkr(int[][] pole, int i, int j, int val) {
+        if (indOutOfBounds(i, j) && pole[i][j] == 0) {
+            pole[i][j] = val;
+        }
+    }
+    private void setOkrBeforeGame(int[][] pole, int i, int j, int k) {
+        setOkr(pole, i - 1, j - 1, k);
+        setOkr(pole, i - 1, j, k);
+        setOkr(pole, i - 1, j + 1, k);
+        setOkr(pole, i, j + 1, k);
+        setOkr(pole, i, j - 1, k);
+        setOkr(pole, i + 1, j + 1, k);
+        setOkr(pole, i + 1, j, k);
+        setOkr(pole, i + 1, j - 1, k);
+    }
+    public boolean handSetPaluba(int i, int j, int kolPal, boolean napr){
+        //признак установки палубы
+        boolean flag = false;
+        // Если можно расположить палубу
+        if (testNewPaluba(polePlayer, i, j)) {
+            if (napr==false){ // вправо
+                if (testNewPaluba(polePlayer, i, j + (kolPal - 1)))
+                    flag = true;
+            }
+            else if (napr){ // вниз
+                if (testNewPaluba(polePlayer, i + (kolPal - 1), j))
+                    flag = true;
+            }
+        }
+        if (flag) {
+            //Помещаем в ячейку число палуб
+            polePlayer[i][j] = kolPal;
+            // Окружаем минус двойками
+            setOkrBeforeGame(polePlayer, i, j, -2);
+            if (napr){ // вправо
+                for (int k = kolPal - 1; k >= 1; k--) {
+                    polePlayer[i][j + k] = kolPal;
+                    setOkrBeforeGame(polePlayer, i, j + k, -2);
+                }
+            }
+            else if (napr){ // вниз
+                for (int k = kolPal - 1; k >= 1; k--) {
+                    polePlayer[i + k][j] = kolPal;
+                    setOkrBeforeGame(polePlayer, i + k, j, -2);
+                }
+            }
+        }
+        okrEnd(polePlayer); //заменяем -2 на -1
+        return flag;
+    }
+    private boolean testNewPaluba(int [][]pole,int i, int j){
+        if (indOutOfBounds(i, j)==false) return false;
+        if ((pole[i][j]==0) || (pole[i][j]==-2)) return true;
+        else return false;
+    }
+    private void okrEnd(int[][] pole) {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (pole[i][j] == -2)
+                    pole[i][j] = -1;
+            }
+        }
+    }
+    private void autoSetPaluba(int [][]mas, int kolPal){
+        int i = 0, j = 0;
+        while (true) {
+            boolean flag = false;
+            i = (int) (Math.random() * 10);
+            j = (int) (Math.random() * 10);
+            int napr = (int) (Math.random() * 4); // 0 - вверх. 1 - вправо. 2 - вниз. 3 - влево
+
+            // Если можно расположить палубу
+            if (testNewPaluba(mas, i, j)) {
+                if (napr == 0) { //вверх
+                    if (testNewPaluba(mas, i - (kolPal - 1), j))  //если можно расположить палубу вверх, то flag = true
+                        flag = true;
+                }
+                else if (napr == 1){ // вправо
+                    if (testNewPaluba(mas, i, j + (kolPal - 1)))
+                        flag = true;
+                }
+                else if (napr == 2){ // вниз
+                    if (testNewPaluba(mas, i + (kolPal - 1), j))
+                        flag = true;
+                }
+                else if (napr == 3){ // влево
+                    if (testNewPaluba(mas, i, j -(kolPal - 1)))
+                        flag = true;
+                }
+            }
+            if (flag) {
+                //Помещаем в ячейку число палуб
+                mas[i][j] = kolPal;
+                // Окружаем минус двойками
+                setOkrBeforeGame(mas, i, j, -2);
+                if (napr == 0) {// вверх
+                    for (int k = kolPal - 1; k >= 1; k--) {
+                        mas[i -k][j] = kolPal;
+                        setOkrBeforeGame(mas, i - k, j, -2);
+                    }
+                }
+                else if (napr == 1){ // вправо
+                    for (int k = kolPal - 1; k >= 1; k--) {
+                        mas[i][j + k] = kolPal;
+                        setOkrBeforeGame(mas, i, j + k, -2);
+                    }
+                }
+                else if (napr == 2){ // вниз
+                    for (int k = kolPal - 1; k >= 1; k--) {
+                        mas[i + k][j] = kolPal;
+                        setOkrBeforeGame(mas, i + k, j, -2);
+                    }
+                }
+                else { // влево
+                    for (int k = kolPal - 1; k >= 1; k--) {
+                        mas[i][j -k] = kolPal;
+                        setOkrBeforeGame(mas, i, j - k, -2);
+                    }
+                }
+                //прерываем цикл
+                break;
+            }
+        }
+        okrEnd(mas); //заменяем -2 на -1
+    }
+    private void setPalubaPlay(){
+        autoSetPaluba(polePlayer, 4);
+        for (int i = 1; i <= 2; i++) {
+            autoSetPaluba(polePlayer, 3);
+        }
+        for (int i = 1; i <= 3; i++) {
+            autoSetPaluba(polePlayer, 2);
+        }
+        for(int i = 1;i<= 4;i++){
+            autoSetPaluba(polePlayer,1);
+        }
+    }
+    private void setPalubaComp() {
+        autoSetPaluba(poleComp, 4);
+        for (int i = 1; i <= 2; i++) {
+            autoSetPaluba(poleComp, 3);
+        }
+        for (int i = 1; i <= 3; i++) {
+            autoSetPaluba(poleComp, 2);
+        }
+        for (int i = 1; i <= 4; i++) {
+            autoSetPaluba(poleComp, 1);
+        }
+    }
+
     public void kolvoUbitPlayer(int[][]mas) {
         C4 = 0;C3 = 0;C2 = 0;C1 = 0;
         for (int i = 0; i < 10; i++) {

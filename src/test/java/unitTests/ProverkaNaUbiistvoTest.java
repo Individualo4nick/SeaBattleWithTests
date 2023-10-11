@@ -1,4 +1,4 @@
-package tests;
+package unitTests;
 
 import org.example.Game;
 import org.junit.jupiter.api.Assertions;

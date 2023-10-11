@@ -8,6 +8,11 @@ version = '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.example.Main'
+    }
+}
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'

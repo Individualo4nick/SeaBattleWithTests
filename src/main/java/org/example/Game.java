@@ -1,13 +1,113 @@
 package org.example;
 
+import javax.swing.*;
+
 public class Game {
     public int polePlayer[][];
     public int poleComp[][];
     public int C1, C2, C3, C4;
     public int P1, P2, P3, P4;
+    public final int pause=600;
+    public boolean myHod;
+    public boolean compHod;
+    public static int endGame=3;
+    Thread thread=new Thread();
     public Game() {
         polePlayer = new int[10][10];
         poleComp = new int[10][10];
+    }
+    public void start() {
+        //если вдруг компьютер еще не закончил ход, то ждем
+        //обнуляем массив
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                polePlayer[i][j] = 0;
+                poleComp[i][j] = 0;
+            }
+        }
+        myHod =true; //мой ход
+        compHod=false;
+        endGame=0;// игра идет
+        kolvoUbitPk(poleComp);
+        kolvoUbitPlayer(polePlayer);
+        if (!Screen.rasstanovka) {
+            setPalubaPlay();
+        }
+        setPalubaComp();
+    }
+    public void hodPlayer(int pole[][], int i, int j) {
+        pole[i][j] += 7;
+        proverkaNaPopadanie(pole, i, j);
+        endGame();
+        thread =new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //если промах
+                if (poleComp[i][j] < 8) {
+                    myHod = false;
+                    compHod = true; //передаем ход компьютеру
+                    // Ходит компьютер - пока попадает в цель
+                    while (compHod) {
+                        try {
+                            Thread.sleep(pause);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        compHod = compHodit(polePlayer);
+                        //воспроизводим звук при попадании компьютера
+                    }
+                    myHod = true;//передаем ход игроку после промаха компьютера
+                }
+            }
+        });
+        thread.start();
+    }
+    public void endGame(){
+        if (endGame==0){
+            int sumEnd=330; //когда все корабли убиты
+            int sumPlay=0; // Сумма убитых палуб игрока
+            int sumComp=0; // Сумма убитых палуб компьютера
+            kolvoUbitPk(poleComp);
+            kolvoUbitPlayer(polePlayer);
+            if (endGame==0) {
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        // Суммируем подбитые палубы
+                        if (polePlayer[i][j] >= 15) sumPlay += polePlayer[i][j];
+                        if (poleComp[i][j] >= 15) sumComp += poleComp[i][j];
+                    }
+                }
+                if (sumPlay == sumEnd) {
+                    endGame = 2;
+                    //выводим диалоговое окно игроку
+                    JOptionPane.showMessageDialog(null,
+                            "Вы проиграли! Попробуйте еще раз",
+                            "Вы проиграли", JOptionPane.INFORMATION_MESSAGE);
+
+                } else if (sumComp == sumEnd) {
+                    endGame = 1;
+                    //выводим диалоговое окно игроку
+                    JOptionPane.showMessageDialog(null,
+                            "Поздравляю! Вы выиграли!",
+                            "Вы выиграли", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        }
+    }
+    private void proverkaNaPopadanie(int mas[][], int i, int j){
+        if (mas[i][j]==8) { //Если однопалубный
+            mas[i][j] += 7; //прибавляем к убитому +7
+            surroundADeadShip(mas,i,j);//Уменьшаем окружение убитого на 1
+        }
+        else if (mas[i][j]==9){
+            proverkaNaUbiistvo(mas,i,j,2);
+        }
+        else if (mas[i][j]==10){
+            proverkaNaUbiistvo(mas,i,j,3);
+        }
+        else if (mas[i][j]==11){
+            proverkaNaUbiistvo(mas,i,j,4);
+        }
     }
     public void setOkrKilled(int mas[][], int i, int j){
         if (indOutOfBounds(i, j)){
